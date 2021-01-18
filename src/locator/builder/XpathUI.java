@@ -10,14 +10,17 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.PasswordAuthentication;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -34,7 +37,7 @@ public class XpathUI{
 	static String inputPath;
 	static String tagName;
 	static String locType;
-	public String expectedOutput;
+	static String expectedOutput;
 	public static String fileUrl;
 
 	public static void main(String args[]) {
@@ -43,7 +46,10 @@ public class XpathUI{
 		JPanel labels = new JPanel(new GridLayout(0, 1, 4, 4));
 		labels.add(new JLabel("Choose file / Provide URL :", SwingConstants.LEFT));
 		labels.add(new JLabel("Select Locator type : ", SwingConstants.RIGHT));
-		labels.add(new JLabel("Select the HTML tag ", SwingConstants.RIGHT));
+		labels.add(new JLabel("Select the HTML tag : ", SwingConstants.RIGHT));
+		labels.add(new JLabel("Login required for Web HTML Url : ",SwingConstants.LEFT));
+		labels.add(new JLabel("Enter Username : ",SwingConstants.RIGHT));
+		labels.add(new JLabel("Enter Password : ",SwingConstants.RIGHT));
 
 		main.add(labels, BorderLayout.WEST);
 
@@ -63,12 +69,34 @@ public class XpathUI{
 				"span", "table", "td", "tr"};
 		JComboBox<String> comboTags = new JComboBox<String>(tags);
 		comboTags.setPreferredSize(new DimensionUIResource(100, 18));
+		JCheckBox checkBox=new JCheckBox();
+		JTextField userName=new JTextField();
+		userName.enable(false);;
+		JPasswordField jpf=new JPasswordField();
+		jpf.enable(false);
 		input.add(cfButton);
 		fields.add(input);
 		fields.add(combo);
 		fields.add(comboTags);
+		fields.add(checkBox);
+		fields.add(userName);
+		fields.add(jpf);
 		main.add(fields, BorderLayout.CENTER);
 
+		checkBox.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(checkBox.isSelected()){
+					userName.enable(true);
+					jpf.enable(true);
+				}else{
+					userName.enable(false);
+					jpf.enable(false);
+				}
+				
+			}
+		});
 		cfButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -153,12 +181,14 @@ public class XpathUI{
 					executeOutput = true;
 				}
 				if (executeOutput) {
-					xpathUI.expectedOutput = generateOutput(inputPath, tagName);
-					if (xpathUI.expectedOutput.equals("No html tag found in the provided html")) {
-						JOptionPane.showMessageDialog(new JPanel(), xpathUI.expectedOutput, "Information",
+					String execOutput="";
+					execOutput = generateOutput(inputPath, tagName);
+					expectedOutput=execOutput;
+					if (XpathUI.expectedOutput.equals("No html tag found in the provided html") || XpathUI.expectedOutput.contains("Exception")) {
+						JOptionPane.showMessageDialog(new JPanel(), XpathUI.expectedOutput, "Information",
 								JOptionPane.WARNING_MESSAGE);
-					} else if(xpathUI.expectedOutput.contains("Error")){
-						JOptionPane.showMessageDialog(new JPanel(), xpathUI.expectedOutput, "Error Message",
+					} else if(XpathUI.expectedOutput.contains("Error")){
+						JOptionPane.showMessageDialog(new JPanel(), XpathUI.expectedOutput, "Error Message",
 								JOptionPane.ERROR_MESSAGE);
 					}else {
 					downLoad.addActionListener(new ActionListener() {
@@ -184,7 +214,7 @@ public class XpathUI{
 											&& !saveFile.split(".txt")[0].isEmpty()) {
 										try{
 											FileOutputStream fout = new FileOutputStream(new File(saveFile));
-											fout.write(xpathUI.expectedOutput.getBytes());
+											fout.write(XpathUI.expectedOutput.getBytes());
 											fout.flush();
 											fout.close();
 										}catch(Exception fileErr){
@@ -207,7 +237,7 @@ public class XpathUI{
 					JPanel text = new JPanel(new GridLayout(0, 1));
 					JTextArea jta = new JTextArea();
 					jta.setText("");
-					jta.setText(xpathUI.expectedOutput);
+					jta.setText(XpathUI.expectedOutput);
 					jta.setLineWrap(true);
 					jta.setRows(15);
 					jta.setColumns(1);
