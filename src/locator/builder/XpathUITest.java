@@ -30,6 +30,8 @@ public class XpathUITest {
 	public static String xpath = "//";
 	public static XpathUITest htmlPage;
 	public static org.w3c.dom.Document xmlDoc;
+	static boolean textFound=false;
+	int nameCount=1;
 	public static ElementCountReturn obj = new ElementCountReturn();
 
 	public static String output = "";
@@ -37,7 +39,7 @@ public class XpathUITest {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		XpathUITest onj = new XpathUITest();
-		onj.xpathBuilder("https://google.com", "a");
+	System.out.println(onj.xpathBuilder("C:\\Users\\DELL\\Desktop\\Subarunet - Subarunet.html", "i"));
 	}
 
 	public String xpathBuilder(String url, String tag) throws IOException, InterruptedException {
@@ -108,11 +110,19 @@ public class XpathUITest {
 									output = output + "" + "\n";
 							}
 						}
-
-						if (!isExclude && !generatedName.isEmpty() && !ele.attributes().toString().contains("hidden")
-								&& !(ele.tagName().equals("a") && ele.hasAttr("aria-expanded"))
-								&& (!ele.attributes().toString().contains("display:none")
-										|| !ele.attributes().toString().contains("height=\"0\""))) {
+						boolean exec=false;
+                       if(tag.equals("i")){
+                    	   exec=!isExclude && !generatedName.isEmpty()
+   								&& !(ele.tagName().equals("a") && ele.hasAttr("aria-expanded"))
+   								&& (!ele.attributes().toString().contains("display:none")
+   										|| !ele.attributes().toString().contains("height=\"0\""));
+                       }else{
+                    	   exec=!isExclude && !generatedName.isEmpty() && !ele.attributes().toString().contains("aria-hidden")
+   								&& !(ele.tagName().equals("a") && ele.hasAttr("aria-expanded"))
+   								&& (!ele.attributes().toString().contains("display:none")
+   										|| !ele.attributes().toString().contains("height=\"0\""));
+                       }
+						if (exec) {
 							generatedPath = returnXpath(document, ele);
 							if (!generatedPath.isEmpty()) {
 								if (obj.elementCount(generatedPath, xmlDoc) < 2
@@ -124,14 +134,12 @@ public class XpathUITest {
 									String gen = htmlPage.absoluteXpathGenerator(ele);
 									if (!gen.isEmpty()) {
 										output = output + generatedName + "_" + ele.tagName() + " = " + gen + "\n";
-										System.out.println(output);
 									}
 								}
 							} else if (generatedPath.isEmpty()) {
 								String gen = htmlPage.absoluteXpathGenerator(ele);
 								if (!gen.isEmpty()) {
 									output = output + generatedName + "_" + ele.tagName() + " = " + gen + "\n";
-									System.out.println(output);
 								}
 							}
 						}
@@ -147,51 +155,53 @@ public class XpathUITest {
 		return output;
 	}
 
-	public String returnLocName(Element element) {
+public String returnLocName(Element element) {
+		
 		Attributes atrb = element.attributes();
 		locName = "";
-		boolean found = false;
-		if (!element.ownText().isEmpty()) {
-			temp = temp + element.ownText();
-			int i = element.getElementsContainingOwnText(element.ownText()).size();
-			if (i == 0 || i > 2) {
-				found = true;
-			} else {
-				temp = "xpath_";
+		boolean found=false;
+		if(!element.ownText().isEmpty()){
+			temp=temp+element.ownText();
+			int i=element.getElementsContainingOwnText(element.ownText()).size();
+			if(i==0 || i>2){
+				found=true;
+			}else{
+				temp="xpath_";
 			}
 		}
-		if (found != true) {
-			if (atrb.hasKey("aria-label")) {
-				temp = temp + atrb.get("aria-label");
-			} else if (atrb.hasKey("name")) {
-				temp = temp + atrb.get("name");
+		if(found!=true){
+			if(atrb.hasKey("aria-label")){
+				temp=temp+atrb.get("aria-label")+"_label";
+			}else if (atrb.hasKey("name")) {
+				temp = temp + atrb.get("name")+"_name";
 			} else if (atrb.hasKey("title")) {
-				temp = temp + atrb.get("title");
+				temp = temp + atrb.get("title")+"_title";
 			} else if (atrb.hasKey("value")) {
-				temp = temp + atrb.get("value");
+				temp = temp + atrb.get("value")+"_value";
 			} else if (atrb.hasKey("id")) {
-				temp = temp + atrb.get("id");
+				temp = temp + atrb.get("id")+"_id";
 			} else if (atrb.hasKey("class")) {
-				temp = temp + atrb.get("class");
+				temp = temp + atrb.get("class")+"_class";
 			} else if (!element.ownText().isEmpty()) {
 				if (element.ownText().length() > 25) {
 					temp = temp + element.ownText().substring(0, 25).trim();
-					locName = temp;
+					locName = temp+"_text";
 				} else {
 					temp = temp + element.ownText();
-					locName = temp;
+					locName = temp+"_text";
 				}
 				temp = "xpath_";
 				return locName;
 			} else if (atrb.hasKey("placeholder")) {
-				temp = temp + atrb.get("placeholder");
+				temp = temp + atrb.get("placeholder")+"_placeholder";
 			} else if (atrb.hasKey("alt")) {
-				temp = temp + atrb.get("alt");
+				temp = temp + atrb.get("alt")+"_alt";
 			}
 		}
-
+		
 		if (temp.equals("xpath_")) {
-			locName = temp + element.tagName() + "_1";
+			locName = temp + element.tagName() + "_"+nameCount;
+			nameCount=nameCount+1;
 			return locName;
 		} else {
 			locName = temp;
@@ -316,9 +326,9 @@ public class XpathUITest {
 							}
 						} else {
 							int tot = obj.elementCount(temp, xmlDoc);
-							if (tot == 1 || tot > 1) {
+							if (tot == 1) {
 								return temp;
-							} else if (tot < 1) {
+							} else if (tot < 1 || tot > 1) {
 								temp = "";
 								continue;
 							}
@@ -447,6 +457,7 @@ public class XpathUITest {
 
 	public static String getElementText(Element element) throws XPathExpressionException {
 		String temp = xpath + element.tagName() + "/";
+		String temp1=temp;
 		Element parent = element;
 		if (parent.text().isEmpty()) {
 			return "";
@@ -465,42 +476,61 @@ public class XpathUITest {
 					if (child.ownText().isEmpty()) {
 						continue;
 					} else if (parent.text().contains(child.ownText())) {
-						String temp1 = temp;
+						temp1 = temp;
 						String value = child.ownText();
-						if (value.contains("//") || value.contains("/")) {
+						String iterTemp="";
+						if (value.contains("https://") || value.contains("http://")) {
 							value = value.split("//")[1];
 						}
-						temp = temp1 + child.tagName() + "[text()=\"" + value + "\"]";
+						iterTemp=child.tagName() + "[text()=\"" + value + "\"]";
+						temp = temp1 + iterTemp;
 
-						if (obj.elementCount(temp, xmlDoc) != 0)
+						if (obj.elementCount(temp, xmlDoc) ==1){
 							return temp;
-						else {
-							temp = temp1 + child.tagName() + "[contains(text(),\"" + value + "\")]";
+						}else if(obj.elementCount(temp, xmlDoc) ==0){
+							temp=temp.replace(iterTemp, "");
+							iterTemp=child.tagName() + "[contains(text(),\"" + value + "\")]";
+							temp = temp1 + iterTemp;
+							
+							if(obj.elementCount(temp, xmlDoc)==1)
+								return temp;
+							else if(obj.elementCount(temp, xmlDoc)==0){
+								temp=temp.replace(iterTemp, "");
+							}else{
+								textFound=true;
+							}
+							
 						}
 					}
+					try{
 					if (obj.elementCount(temp, xmlDoc) == 1) {
-						if (temp.substring(temp.length() - 1).equals("/"))
-							return "";
-						else
 							return temp;
 					}
+					}catch(Exception e){
+						//do nothing
+					}
+					if(textFound)
+						break;
 				}
+		
 				for (Element child : children) {
 					int count = 1;
+					String path = "";
 					if (!child.text().isEmpty() && parent.text().contains(child.text())) {
-						String path = "";
+						
 						try {
 							path = htmlPage.returnXpath(document, child).replaceAll("//", "");
 							if (!path.isEmpty())
-								temp = temp + path + "/";
+								temp = temp1 +path + "/";
 							else
-								temp = temp + child.tagName() + "[" + count + "]/";
+								temp = temp1 +child.tagName() + "[" + count + "]/";
 						} catch (Exception e) {
-							temp = temp + child.tagName() + "[" + count + "]/";
+							temp = temp1 +"/"+ child.tagName() + "[" + count + "]/";
 						}
 						parent = child;
 						break;
 					}
+					count=count+1;
 				}
 				iter = iter + 1;
 			}
