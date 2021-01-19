@@ -46,10 +46,10 @@ public class XpathUITest {
 			try {
 				document = getHTML(url, "baseuri");
 				if (document == null) {
-					return "Not able to read the html url provided, try agan by saving the file as html file in local";
+					return "Exception : Not able to read the html url provided, try agan by saving the file as html file in local";
 				}
 			} catch (Exception e) {
-				return "Not able to read the html url provided, try agan by saving the file as html file in local";
+				return "Exception : Not able to read the html url provided, try agan by saving the file as html file in local";
 			}
 			ElementCountReturn obj = new ElementCountReturn();
 			Elements elements = document.getElementsByTag(tag);
@@ -67,7 +67,7 @@ public class XpathUITest {
 			if (elements.size() != 0) {
 				xmlDoc = obj.xmlDoc(document);
 				if (xmlDoc == null) {
-					return "Error while generating locator for html";
+					return "Exception : Error while generating locator for html";
 				} else {
 					String generatedPath = "";
 					String generatedName = "";
@@ -140,8 +140,8 @@ public class XpathUITest {
 				return "No html tag found in the provided html";
 			}
 		} catch (Exception e) {
-			System.out.println("Error while building xpath and please find the below error log : " + e.getMessage());
-			output = output + "Error while building xpath and please find the below error log : " + e.getMessage();
+			System.out.println("Exception : Error while building xpath and please find the below error log : " + e.getMessage());
+			output = output + "Exception : Error while building xpath and please find the below error log : " + e.getMessage();
 		}
 		return output;
 	}
@@ -363,7 +363,7 @@ public class XpathUITest {
 				return generateAbsXpath(element);
 			}
 		} catch (Exception e) {
-			System.out.println("Error while building xpath and please find the below error log : " + e.getMessage());
+			System.out.println("Exception : Error while building xpath and please find the below error log : " + e.getMessage());
 		}
 		return "";
 	}

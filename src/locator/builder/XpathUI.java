@@ -1,6 +1,7 @@
 package locator.builder;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -12,12 +13,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -34,16 +37,23 @@ public class XpathUI{
 	static String inputPath;
 	static String tagName;
 	static String locType;
-	public String expectedOutput;
+	static String expectedOutput;
 	public static String fileUrl;
+	static String fldinput;
 
 	public static void main(String args[]) {
-		XpathUI xpathUI = new XpathUI();
+		//XpathUI xpathUI = new XpathUI();
 		JPanel main = new JPanel(new BorderLayout(8, 8));
 		JPanel labels = new JPanel(new GridLayout(0, 1, 4, 4));
 		labels.add(new JLabel("Choose file / Provide URL :", SwingConstants.LEFT));
 		labels.add(new JLabel("Select Locator type : ", SwingConstants.RIGHT));
-		labels.add(new JLabel("Select the HTML tag ", SwingConstants.RIGHT));
+		labels.add(new JLabel("Select the HTML tag : ", SwingConstants.RIGHT));
+		labels.add(new JLabel("Login required for Web HTML Url : ",SwingConstants.LEFT));
+		labels.add(new JLabel("Enter Username : ",SwingConstants.RIGHT));
+		labels.add(new JLabel("Enter Password : ",SwingConstants.RIGHT));
+		labels.add(new JLabel("Provide Username Locator : ",SwingConstants.RIGHT));
+		labels.add(new JLabel("Provide Password Locator : ",SwingConstants.RIGHT));
+		labels.add(new JLabel("Provide Login button Locator : ",SwingConstants.RIGHT));
 
 		main.add(labels, BorderLayout.WEST);
 
@@ -54,21 +64,68 @@ public class XpathUI{
 		userInput.setPreferredSize(new Dimension(110, 25));
 		input.add(userInput);
 		JButton cfButton = new JButton("Choose File");
-		cfButton.setPreferredSize(new DimensionUIResource(110, 24));
+		cfButton.setPreferredSize(new Dimension(110, 24));
 		String[] options = { "Select Locator", "Classname", "id", "linktext", "name", "xpath" };
 		JComboBox<String> combo = new JComboBox<String>(options);
-		combo.setPreferredSize(new DimensionUIResource(100, 18));
+		combo.setPreferredSize(new Dimension(100, 18));
 
-		String[] tags = { "Select Tag", "a", "h1", "h3", "h4", "img", "input", "label", "li", "option", "select",
+		String[] tags = { "Select Tag", "a", "h1", "h3", "h4","i","img", "input", "label", "li", "option", "select",
 				"span", "table", "td", "tr"};
 		JComboBox<String> comboTags = new JComboBox<String>(tags);
 		comboTags.setPreferredSize(new DimensionUIResource(100, 18));
+		JCheckBox checkBox=new JCheckBox();
+		JTextField userName=new JTextField();
+		userName.setSize(110, 25);
+		userInput.setDisabledTextColor(new Color(10));
+		userName.enable(false);;
+		JPasswordField jpf=new JPasswordField();
+		jpf.setSize(110,25);
+		jpf.enable(false);
+		jpf.setDisabledTextColor(new Color(10));
+		JTextField userLoc=new JTextField();
+		userLoc.enable(false);
+		userLoc.setSize(110, 25);
+		userLoc.setDisabledTextColor(new Color(10));
+		JTextField pwdLoc=new JTextField();
+		pwdLoc.enable(false);
+		pwdLoc.setSize(110, 25);
+		pwdLoc.setDisabledTextColor(new Color(10));
+		JTextField loginLoc=new JTextField();
+		loginLoc.enable(false);
+		loginLoc.setSize(110, 25);
+		loginLoc.setDisabledTextColor(new Color(10));
 		input.add(cfButton);
 		fields.add(input);
 		fields.add(combo);
 		fields.add(comboTags);
+		fields.add(checkBox);
+		fields.add(userName);
+		fields.add(jpf);
+		fields.add(userLoc);
+		fields.add(pwdLoc);
+		fields.add(loginLoc);
 		main.add(fields, BorderLayout.CENTER);
 
+		checkBox.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(checkBox.isSelected()){
+					userName.enable(true);
+					jpf.enable(true);
+					userLoc.enable(true);
+					pwdLoc.enable(true);
+					loginLoc.enable(true);
+				}else{
+					userName.enable(false);
+					jpf.enable(false);
+					userLoc.enable(false);
+					pwdLoc.enable(false);
+					loginLoc.enable(false);
+				}
+				
+			}
+		});
 		cfButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -101,10 +158,15 @@ public class XpathUI{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
-				JLabel j = null;
-				url = userInput.getText();
-				if(!url.startsWith("http") || !url.startsWith("https")){
+				url="";
+				selectedFile="";
+				JLabel j =null;
+				fldinput=userInput.getText();
+				if(fldinput.contains("http") || fldinput.contains("https"))
+					url=fldinput;
+				else
+					selectedFile=fldinput;
+				if(url==null || (!url.startsWith("http") || !url.startsWith("https"))){
 					url="";
 				}
 				locType = combo.getSelectedItem().toString();
@@ -153,12 +215,14 @@ public class XpathUI{
 					executeOutput = true;
 				}
 				if (executeOutput) {
-					xpathUI.expectedOutput = generateOutput(inputPath, tagName);
-					if (xpathUI.expectedOutput.equals("No html tag found in the provided html")) {
-						JOptionPane.showMessageDialog(new JPanel(), xpathUI.expectedOutput, "Information",
+					String execOutput="";
+					execOutput = generateOutput(inputPath, tagName);
+					expectedOutput=execOutput;
+					if (XpathUI.expectedOutput.equals("No html tag found in the provided html") || XpathUI.expectedOutput.contains("Exception")) {
+						JOptionPane.showMessageDialog(new JPanel(), XpathUI.expectedOutput, "Information",
 								JOptionPane.WARNING_MESSAGE);
-					} else if(xpathUI.expectedOutput.contains("Error")){
-						JOptionPane.showMessageDialog(new JPanel(), xpathUI.expectedOutput, "Error Message",
+					} else if(XpathUI.expectedOutput.contains("Error")){
+						JOptionPane.showMessageDialog(new JPanel(), XpathUI.expectedOutput, "Error Message",
 								JOptionPane.ERROR_MESSAGE);
 					}else {
 					downLoad.addActionListener(new ActionListener() {
@@ -184,7 +248,7 @@ public class XpathUI{
 											&& !saveFile.split(".txt")[0].isEmpty()) {
 										try{
 											FileOutputStream fout = new FileOutputStream(new File(saveFile));
-											fout.write(xpathUI.expectedOutput.getBytes());
+											fout.write(XpathUI.expectedOutput.getBytes());
 											fout.flush();
 											fout.close();
 										}catch(Exception fileErr){
@@ -207,7 +271,7 @@ public class XpathUI{
 					JPanel text = new JPanel(new GridLayout(0, 1));
 					JTextArea jta = new JTextArea();
 					jta.setText("");
-					jta.setText(xpathUI.expectedOutput);
+					jta.setText(XpathUI.expectedOutput);
 					jta.setLineWrap(true);
 					jta.setRows(15);
 					jta.setColumns(1);
