@@ -45,7 +45,7 @@ public class XpathUI{
 		//XpathUI xpathUI = new XpathUI();
 		JPanel main = new JPanel(new BorderLayout(8, 8));
 		JPanel labels = new JPanel(new GridLayout(0, 1, 4, 4));
-		labels.add(new JLabel("Choose file / Provide URL :", SwingConstants.LEFT));
+		labels.add(new JLabel("Choose file / Provide URL :", SwingConstants.RIGHT));
 		labels.add(new JLabel("Select Locator type : ", SwingConstants.RIGHT));
 		labels.add(new JLabel("Select the HTML tag : ", SwingConstants.RIGHT));
 		labels.add(new JLabel("Login required for Web HTML Url : ",SwingConstants.LEFT));
@@ -65,12 +65,12 @@ public class XpathUI{
 		input.add(userInput);
 		JButton cfButton = new JButton("Choose File");
 		cfButton.setPreferredSize(new Dimension(110, 24));
-		String[] options = { "Select Locator", "Classname", "id", "linktext", "name", "xpath" };
+		String[] options = { "Select Locator","Classname", "id", "linktext", "name", "xpath" };
 		JComboBox<String> combo = new JComboBox<String>(options);
 		combo.setPreferredSize(new Dimension(100, 18));
 
-		String[] tags = { "Select Tag","'a' with text", "h1","h3", "h4","i","img", "input", "label","'li' with text","'option' with text","select",
-				"'span' with text", "table","'td' with text","tr"};
+		String[] tags = { "Select Tag","a","'a' with text", "h1","h3", "h4","i","img", "input", "label","li","'li' with text","option","'option' with text","select",
+				"span","'span' with text", "table","td","'td' with text","tr"};
 		JComboBox<String> comboTags = new JComboBox<String>(tags);
 		comboTags.setPreferredSize(new DimensionUIResource(100, 18));
 		JCheckBox checkBox=new JCheckBox();

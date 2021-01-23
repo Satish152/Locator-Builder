@@ -80,8 +80,10 @@ public class XpathUITest {
 						temp = "xpath_";
 						tempVar = "";
 						xpath = "//";
+						textFound=false;
 						generatedName = returnLocName(ele);
-						if (textTags.equals(tagValue) || tagValue.contains("with text")) {
+						if (textTags.contains(tagValue) || tagValue.contains("with text")) {
+							textFound=true;
 							generatedPath = getElementText(ele);
 							if (generatedPath.isEmpty()) {
 								generatedPath = returnXpath(document, ele);
@@ -118,12 +120,12 @@ public class XpathUITest {
    								&& (!ele.attributes().toString().contains("display:none")
    										|| !ele.attributes().toString().contains("height=\"0\""));
                        }else{
-                    	   exec=!isExclude && !generatedName.isEmpty() && !ele.attributes().toString().contains("aria-hidden")
+                    	   exec=!isExclude && !generatedName.isEmpty() && !ele.attributes().toString().contains("hidden")
    								&& !(ele.tagName().equals("a") && ele.hasAttr("aria-expanded"))
    								&& (!ele.attributes().toString().contains("display:none")
    										|| !ele.attributes().toString().contains("height=\"0\""));
                        }
-						if (exec) {
+						if (exec && !textFound) {
 							generatedPath = returnXpath(document, ele);
 							if (!generatedPath.isEmpty()) {
 								if (obj.elementCount(generatedPath, xmlDoc) < 2
