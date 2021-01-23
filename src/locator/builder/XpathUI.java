@@ -69,8 +69,8 @@ public class XpathUI{
 		JComboBox<String> combo = new JComboBox<String>(options);
 		combo.setPreferredSize(new Dimension(100, 18));
 
-		String[] tags = { "Select Tag", "a", "h1", "h3", "h4","i","img", "input", "label", "li", "option", "select",
-				"span", "table", "td", "tr"};
+		String[] tags = { "Select Tag","'a' with text", "h1","h3", "h4","i","img", "input", "label","'li' with text","'option' with text","select",
+				"'span' with text", "table","'td' with text","tr"};
 		JComboBox<String> comboTags = new JComboBox<String>(tags);
 		comboTags.setPreferredSize(new DimensionUIResource(100, 18));
 		JCheckBox checkBox=new JCheckBox();

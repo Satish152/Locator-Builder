@@ -39,7 +39,7 @@ public class XpathUITest {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		XpathUITest onj = new XpathUITest();
-	System.out.println(onj.xpathBuilder("C:\\Users\\DELL\\Desktop\\Subarunet - Subarunet.html", "i"));
+	System.out.println(onj.xpathBuilder("https://www.bing.com/", "li"));
 	}
 
 	public String xpathBuilder(String url, String tag) throws IOException, InterruptedException {
@@ -54,15 +54,16 @@ public class XpathUITest {
 			} catch (Exception e) {
 				return "Exception : Not able to read the html url provided, try agan by saving the file as html file in local";
 			}
+			String tagValue="";
+			tagValue=tag;
+			if(tag.contains("with text")){
+				tag=tag.replaceAll("'", "").split(" ")[0].toString();
+			}
 			ElementCountReturn obj = new ElementCountReturn();
 			Elements elements = document.getElementsByTag(tag);
 			List<String> textTags = new LinkedList<String>();
-			textTags.add("a");
 			textTags.add("label");
-			textTags.add("span");
 			textTags.add("h1");
-			textTags.add("li");
-			textTags.add("td");
 			textTags.add("h2");
 			textTags.add("h3");
 			textTags.add("h4");
@@ -80,7 +81,7 @@ public class XpathUITest {
 						tempVar = "";
 						xpath = "//";
 						generatedName = returnLocName(ele);
-						if (textTags.contains(tag)) {
+						if (textTags.equals(tagValue) || tagValue.contains("with text")) {
 							generatedPath = getElementText(ele);
 							if (generatedPath.isEmpty()) {
 								generatedPath = returnXpath(document, ele);
@@ -456,7 +457,31 @@ public String returnLocName(Element element) {
 	}
 
 	public static String getElementText(Element element) throws XPathExpressionException {
-		String temp = xpath + element.tagName() + "/";
+		String temp = xpath;
+		String text="";
+		if(element.ownText().isEmpty() && !element.text().isEmpty()){
+			text=htmlPage.returnXpath(document, element);
+			if(text.isEmpty()){
+				Elements childs=element.parent().children();
+				int count=1;
+				for(Element child:childs){
+					if(element.equals(child)){
+						text=temp+child.tagName()+"["+count+"]";
+						temp=text+"/";
+						break;
+					}
+					
+					if(element.tagName().equals(child.tagName()))
+						count=count+1;
+				}
+				
+				if(temp.equals("//"))
+					temp=xpath+element.tagName()+"/";
+			}else{
+				temp=text+"/";
+			}
+		}
+		
 		String temp1=temp;
 		Element parent = element;
 		if (parent.text().isEmpty()) {
