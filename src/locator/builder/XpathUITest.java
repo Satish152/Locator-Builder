@@ -120,7 +120,7 @@ public class XpathUITest {
    								&& (!ele.attributes().toString().contains("display:none")
    										|| !ele.attributes().toString().contains("height=\"0\""));
                        }else{
-                    	   exec=!isExclude && !generatedName.isEmpty() && !ele.attributes().toString().contains("aria-hidden")
+                    	   exec=!isExclude && !generatedName.isEmpty() && !ele.attributes().toString().contains("hidden")
    								&& !(ele.tagName().equals("a") && ele.hasAttr("aria-expanded"))
    								&& (!ele.attributes().toString().contains("display:none")
    										|| !ele.attributes().toString().contains("height=\"0\""));

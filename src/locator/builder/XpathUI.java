@@ -45,7 +45,7 @@ public class XpathUI{
 		//XpathUI xpathUI = new XpathUI();
 		JPanel main = new JPanel(new BorderLayout(8, 8));
 		JPanel labels = new JPanel(new GridLayout(0, 1, 4, 4));
-		labels.add(new JLabel("Choose file / Provide URL :", SwingConstants.LEFT));
+		labels.add(new JLabel("Choose file / Provide URL :", SwingConstants.RIGHT));
 		labels.add(new JLabel("Select Locator type : ", SwingConstants.RIGHT));
 		labels.add(new JLabel("Select the HTML tag : ", SwingConstants.RIGHT));
 		labels.add(new JLabel("Login required for Web HTML Url : ",SwingConstants.LEFT));
